@@ -1,0 +1,4 @@
+llama-api-client
+paramiko
+python-dotenv
+rich
