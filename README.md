@@ -1,3 +1,7 @@
+
+![executa_llama](https://github.com/user-attachments/assets/18780f97-24f7-4b2d-afd2-4d112a6cd47f)
+
+
 # Llamatrama Agent
 
 Llamatrama Agent is a Python-based conversational assistant that executes real Linux commands on a remote Kali Linux system via SSH, powered by Llama models. It is the second part of the symbolic warhead: Inspectallama (information gathering) and Executallama (command execution).
