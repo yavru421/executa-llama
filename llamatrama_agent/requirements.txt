@@ -2,3 +2,5 @@ llama-api-client
 paramiko
 python-dotenv
 rich
+argparse
+ddgs

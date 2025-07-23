@@ -1,0 +1,39 @@
+Test the Syfe bug bounty program by attempting to identify vulnerabilities in their production environment. Review the provided test environment (
+) and test credentials to understand the application's functionality. Focus on finding high-severity bugs that can lead to significant rewards.
+Key areas to investigate:
+
+    Authentication and Authorization: Test for weaknesses in login, registration, and account management processes.
+    Input Validation and Sanitization: Look for potential SQL Injection, Cross-Site Scripting (XSS), and other injection vulnerabilities.
+    Session Management: Analyze HTTP headers, session cookies, and other session-related data to identify potential issues.
+    API Security: Examine API endpoints, request parameters, and responses to detect vulnerabilities.
+
+Rules to follow:
+
+    Adhere to the program's rules and scope exclusions.
+    Provide detailed reports with reproducible steps.
+    Avoid social engineering, spamming, and denial-of-service (DoS) attacks.
+    Make a good faith effort to avoid privacy violations and destruction of data.
+    Include the 'X-HackerOne-Research: [H1 username]' header in requests to production environments.
+
+Deliverables:
+Upon completing the testing, create a Markdown (.md) file that includes:
+
+    A summary of your findings, including the number of bugs identified and their severity.
+    Detailed reports of each bug, including:
+        Bug description
+        Reproducible steps
+        Screenshots or proof-of-concept code (if applicable)
+        Severity level (based on CVSS scoring)
+    Any additional information or recommendations for further testing.
+
+Reward potential:
+
+    High-severity bugs: $1,000-$1,500 (or higher, at Syfe's discretion)
+    Medium-severity bugs: $500-$750
+    Low-severity bugs: $150-$250
+
+Goal:
+Identify vulnerabilities that can lead to significant rewards while following the program's rules and guidelines. Your findings should be well-documented, reproducible, and submitted in accordance with the program's requirements. The final Markdown file will serve as a comprehensive report of your findings and will be used to facilitate the payout process for any valid bugs discovered.
+Payout process:
+The Markdown file will be reviewed, and valid bugs will be submitted to Syfe for payout. You will be responsible for ensuring that your reports meet the program's requirements and are submitted in the correct format.
+By following this prompt, you will be able to effectively test the Syfe bug bounty program, identify potential vulnerabilities, and generate a comprehensive report of your findings
