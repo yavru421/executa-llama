@@ -1,0 +1,9 @@
+{
+  "ACLs": [
+    {
+      "Action": "accept",
+      "Users": ["user1@example.com", "group:admins"],
+      "Ports": ["100.x.x.x:8000"]
+    }
+  ]
+}
