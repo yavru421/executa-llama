@@ -1,0 +1,28 @@
+name: Tailscale ACL syncing
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  acls:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Go environment
+        uses: actions/setup-go@v3.2.0
+        
+      - name: Install gitops-pusher
+        run: go install tailscale.com/cmd/gitops-pusher@latest
+              
+      - name: Deploy ACL
+        if: github.event_name == 'push'
+        env:
+          TS_API_KEY: ${{ secrets.TS_API_KEY }}
+          TS_TAILNET: ${{ secrets.TS_TAILNET }}
+        run: |
+          gitops-pusher --tailnet $TS_TAILNET --api-key $TS_API_KEY tailscale-acl.json
