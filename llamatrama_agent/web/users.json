@@ -1,0 +1,14 @@
+{
+	"testuser": {
+		"username": "testuser",
+		"full_name": "Test User",
+		"hashed_password": "$2b$12$tTezYHI0wvM1V6zOfENej.zDNdHindmFkB6i2KJ5ETrFlFtUeVCme",
+		"disabled": false
+	},
+	"admin": {
+		"username": "admin",
+		"full_name": "Admin User",
+		"hashed_password": "$2b$12$2lFr3hXrzuDW/FTlQ75gtexvOsIq0s4oWcUjrRFZlwU8vfJG9iazS",
+		"disabled": false
+	}
+}

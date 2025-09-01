@@ -1,57 +1,136 @@
 
+
 ![executa_llama](https://github.com/user-attachments/assets/18780f97-24f7-4b2d-afd2-4d112a6cd47f)
 
+# ExecutaLlama (Llamatrama Agent)
 
-# Llamatrama Agent
+> Conversational, web-based, and CLI control of your Raspberry Pi (or any Linux host) via SSH, powered by Llama models and Tailscale.
 
-Llamatrama Agent is a Python-based conversational assistant that executes real Linux commands on a remote Kali Linux system via SSH, powered by Llama models. It is the second part of the symbolic warhead: Inspectallama (information gathering) and Executallama (command execution).
+---
 
 ## Features
-- Conversational command execution on a real remote Kali Linux system
-- SSH integration using Paramiko (supports key and password authentication)
-- Tool-use agent pattern with Llama model for natural language command translation
-- Color-coded terminal output for clarity
-- Logs every 5 prompt/response pairs to Markdown files in `outputs/`
-- `.env` file for secure API and SSH credentials
+- **Web Dashboard**: Modern, step-by-step UI for device selection, planning, approval, and execution. Breadcrumbs and workflow banners guide the user.
+- **CLI & API**: All features accessible via HTTP endpoints and CLI (curl, Python requests, etc).
+- **SSH Control**: Run any Linux command on any device (including the Pi itself) via SSH, with support for Tailscale tailnet IPs.
+- **Conversational Agent**: Llama-powered natural language to command translation and planning.
+- **Session Logging**: All actions and responses are logged for traceability.
+- **User Auth**: Secure login, password hashing, and file-backed user store.
+- **Tailscale Integration**: Control any device on your tailnet, or run the server on the Pi and control itself.
+- **Advanced Workflows**: Chain commands, manage files, run system checks, and more.
+
+---
+
+## Quick Start
+
+### 1. Install dependencies
+```bash
+python -m venv .venv
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+pip install -r llamatrama_agent/requirements.txt
+```
+
+### 2. Start the server
+```bash
+uvicorn llamatrama_agent.web.main:app --reload --port 8000
+```
+
+### 3. Open the dashboard
+Visit [http://localhost:8000](http://localhost:8000) in your browser.
+
+### 4. Login
+Default credentials:
+- Username: `admin`
+- Password: `admin`
+
+Change the password after first login for security.
+
+---
+
+## Web Dashboard Workflow
+
+1. **Select Device**: Choose a device from your tailnet or add one manually (IP, SSH user, password/key).
+2. **Plan (CourseCheck)**: Generate a step-by-step plan for your task using natural language.
+3. **Review Plan**: See the planned commands and reasoning. Approve or edit as needed.
+4. **Approve & Execute**: Run the approved command(s) on the device. Output is shown live.
+5. **Session Log**: Review all actions and outputs for auditing.
+
+Breadcrumbs and workflow banners guide you through each step.
+
+---
+
+## CLI/API Usage
+
+All features are available via HTTP endpoints. Example (using curl):
+
+```bash
+# Login and save cookie
+curl -X POST -F "username=admin" -F "password=admin" http://localhost:8000/login -c cookies.txt
+
+# List devices
+curl http://localhost:8000/devices -b cookies.txt
+
+# Test SSH connection
+curl -X POST http://localhost:8000/device-test -F "device_ip=192.168.1.23" -F "ssh_user=jdd" -F "ssh_password=" -b cookies.txt
+
+# Run a command
+curl -X POST http://localhost:8000/course-run -F "action=ssh:ls /home/pi" -F "device_ip=192.168.1.23" -F "ssh_user=jdd" -F "ssh_password=" -b cookies.txt
+```
+
+---
+
+## Advanced SSH Workflows (Examples)
+
+- Create and read a file:
+   - `echo 'Hello from Llamatrama!' > /tmp/llama_test.txt`
+   - `cat /tmp/llama_test.txt`
+- List running processes: `ps aux | grep sshd`
+- Check disk and memory: `df -h && free -m`
+- Chain commands: `mkdir -p /tmp/llama_dir && mv /tmp/llama_test.txt /tmp/llama_dir/ && ls -l /tmp/llama_dir/`
+- Download a file: `wget -O /tmp/llama_download.txt https://www.example.com`
+
+---
+
+## Running on the Pi (Self-Control)
+
+You can run the server directly on your Raspberry Pi and control it via the dashboard or API:
+
+1. Start the server on the Pi (see above).
+2. Use `localhost`, `127.0.0.1`, or the Pi's Tailscale IP as the device IP.
+3. All SSH commands will run on the same Pi.
+
+You can also control the Pi from any other device on your tailnet using its Tailscale IP.
+
+---
+
+## Security & Auth
+
+- Passwords are hashed and stored in `users.json`.
+- Change the default admin password after first login.
+- All SSH actions require authentication.
+- Tailscale integration is recommended for secure, private networking.
+
+---
 
 ## Project Structure
 
 ```
 llamatrama_agent/
 ├── agent.py              # Main conversational agent
-├── tools/
-│   └── ssh_tool.py       # SSH command execution logic
+├── web/                  # Web dashboard (FastAPI, HTML, JS, CSS)
+├── tools/                # SSH and other tool logic
+├── plugins/              # Extendable agent tools
 ├── outputs/              # Markdown logs of prompt/response pairs
-│   └── session_1.md      # Example log file
-├── logs/                 # (Reserved for future logs)
 ├── requirements.txt      # Python dependencies
-├── .env                  # API key and SSH credentials
 └── README.md             # Project documentation
 ```
 
-## Usage
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Fill in `.env` with your Llama API key and SSH credentials.
-3. Run the agent:
-   ```bash
-   python agent.py
-   ```
-4. Interact with the agent in natural language. Commands requiring shell execution will be run on the remote Kali system.
+---
 
-## Output Logging
-- Every 5 prompt/response pairs are saved to a Markdown file in the `outputs/` folder (e.g., `session_1.md`).
-- SSH command outputs are included in the logs for traceability.
+## Contributing & Credits
 
-## Example Output Log
-See `outputs/session_1.md` for a sample of how prompts, responses, and SSH outputs are recorded.
-
-## Credits
-- Inspectallama: Information gathering
-- Executallama: Command execution
-- Llamatrama: The combined symbolic warhead
+- Built by yavru421 and contributors.
+- Powered by Llama models, FastAPI, Paramiko, Tailscale, and more.
 
 ---
-**Warning:** This agent interacts with a real remote system. Use caution with commands that may modify or delete files.
+
+**Warning:** This agent interacts with real devices. Use caution with commands that may modify or delete files.

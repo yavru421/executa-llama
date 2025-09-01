@@ -1,6 +1,15 @@
-llama-api-client
-paramiko
-python-dotenv
-rich
-argparse
-ddgs
+llama-api-client  # Llama API client for natural language command translation
+paramiko          # SSH library for Python (Raspberry Pi control)
+python-dotenv     # For loading .env credentials
+rich              # For color terminal output
+argparse          # For CLI tools
+ddgs              # DuckDuckGo search (optional, for PiControl or general use)
+requests          # HTTP client used by the web dashboard
+python-multipart  # required by FastAPI for form data handling
+passlib[bcrypt]   # password hashing
+pytest            # test runner
+
+# --- Web Dashboard dependencies ---
+fastapi
+uvicorn[standard]
+python-jose[cryptography]

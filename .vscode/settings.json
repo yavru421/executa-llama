@@ -1,0 +1,9 @@
+{
+  // Use the workspace venv Python interpreter so VS Code knows which env to activate
+  "python.defaultInterpreterPath": "C:/Users/John/Desktop/executa_llama/executa-llama/venv/Scripts/python.exe",
+
+  // Ensure the Python extension auto-activates the selected interpreter in new terminals
+"python.terminal.activateEnvironment": true,
+"docwriter.progress.trackClasses": true,
+"docwriter.progress.trackTypes": true
+}
