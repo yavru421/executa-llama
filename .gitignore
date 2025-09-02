@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.build/
+.eggs/
+*.egg-info/
+.dist/
+
+# Virtual env
+.env/
+.venv/
+venv/
+ENV/
+
+# Env files / secrets
+*.env
+!.example.env
+
+# Logs & outputs
+logs/
+outputs/*.tmp
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Tests / coverage
+.pytest_cache/
+.coverage*
+htmlcov/
+
+# Node (web dir)
+node_modules/
+web/node_modules/
+web/dist/
+
+# Misc
+*.swp
