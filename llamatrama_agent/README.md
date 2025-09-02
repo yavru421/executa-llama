@@ -1,81 +1,95 @@
-## Raspberry Pi Features
-
-PiControl can do almost anything a user can do on the Pi, and more:
-
-- System info (CPU, memory, disk, OS, uptime, temperature)
-- Update/upgrade all packages
-- Reboot or shutdown the Pi
-- Manage systemd services (status, restart)
-- List and kill processes
-- Install/remove packages
-- List USB and I2C devices
-- GPIO read/write (requires wiringPi/gpio utility)
-- Take photos with Pi camera (requires raspistill)
-- Schedule, list, and remove cron jobs
-- Ping and run speed tests
-- Disk, memory, and CPU usage
-- Tailscale management (status, IP, restart, version)
-
-All features are available as agent commands and can be extended further.
 # PiControl Agent
 
-PiControl Agent is a Python-based conversational assistant that executes real Linux commands on a remote Raspberry Pi via SSH, powered by Llama models. It is designed for easy, conversational control and monitoring of your Raspberry Pi from anywhere.
+PiControl Agent is a Python-based conversational assistant that executes real Linux commands on a remote Raspberry Pi via SSH, powered by local or remote Llama models. It lets you manage, inspect, and automate your Raspberry Pi from anywhere using natural language.
 
-- Tailscale support: Use your Pi's Tailscale IP for secure, private SSH access
-- Conversational command execution on a real remote Raspberry Pi
-- SSH integration using Paramiko (supports key and password authentication)
-- Tool-use agent pattern with Llama model for natural language command translation
-- Color-coded terminal output for clarity
-- Logs every 5 prompt/response pairs to Markdown files in `outputs/`
-- `.env` file for secure API and SSH credentials
+## Key Features
+
+- Conversational to-command translation (LLM powered)
+- Secure SSH execution (Paramiko) supporting password or key auth
+- Tailscale support: seamless private access over your tailnet
+- Rich Raspberry Pi management toolkit:
+  - System info (CPU, memory, disk, OS, uptime, temperature)
+  - Update / upgrade packages
+  - Reboot / shutdown
+  - Manage systemd services (status / restart)
+  - List & kill processes
+  - Install / remove packages
+  - List USB & I2C devices
+  - GPIO read / write (needs wiringPi / gpio util)
+  - Pi camera photos (needs `raspistill`)
+  - Cron: schedule / list / remove jobs
+  - Network: ping + speed tests
+  - Resource usage (disk, memory, CPU)
+  - Tailscale status, IP, restart, version
+- Pluggable tool pattern (easy to extend)
+- Color-coded terminal style output
+- Automatic Markdown session logging (every 5 prompt/response pairs)
+- `.env` based credential & API key management
 
 ## Project Structure
-
 ```
 llamatrama_agent/
-├── agent.py              # Main conversational agent
+├── agent.py              # Main conversational agent entrypoint
 ├── tools/
-│   └── ssh_tool.py       # SSH command execution logic
-├── outputs/              # Markdown logs of prompt/response pairs
-│   └── session_1.md      # Example log file
-├── logs/                 # (Reserved for future logs)
+│   └── ssh_tool.py       # SSH command execution logic & helpers
+├── plugins/              # Optional function/tool plugins
+├── outputs/              # Markdown logs of prompt/response batches
+├── web/                  # Simple web UI (Flask/FastAPI style entry in main.py)
 ├── requirements.txt      # Python dependencies
-├── .env                  # API key and SSH credentials
-└── README.md             # Project documentation
+├── .env                  # API + SSH secrets (NOT committed)
+└── README.md             # Documentation
 ```
 
-## Usage
-1. Install dependencies:
+## Quick Start
+1. Clone repo & install deps:
    ```bash
    pip install -r requirements.txt
    ```
-2. Fill in `.env` with your Llama API key and SSH credentials. For Tailscale, set `SSH_HOST` to your Pi's Tailscale IP (find it with `tailscale ip` on the Pi).
-## Tailscale Integration
-
-If your Raspberry Pi is connected to your tailnet with Tailscale, you can use its Tailscale IP for SSH connections. This is more secure and works across networks without port forwarding.
-
-You can also run Tailscale management commands from the agent, such as:
-- Check Tailscale status
-- Get Tailscale IP
-- Restart Tailscale service
-- Check Tailscale version
-
-These are available as functions in the SSH tool module.
-3. Run the agent:
+2. Create a `.env` file in `llamatrama_agent/` with (example):
+   ```bash
+   LLAMA_API_KEY=your_key_here
+   SSH_HOST=100.x.y.z         # Use Tailscale IP if using Tailscale
+   SSH_USER=pi
+   SSH_PASSWORD=your_password # or omit if using key
+   SSH_KEY_PATH=~/.ssh/id_rsa # optional
+   ```
+3. (Optional) On the Pi install utilities you plan to use:
+   ```bash
+   sudo apt update && sudo apt install -y wiringpi python3-picamera speedtest-cli
+   ```
+4. Run the agent locally:
    ```bash
    python agent.py
    ```
-4. Interact with the agent in natural language. Commands requiring shell execution will be run on the remote Raspberry Pi.
+5. Chat in natural language, e.g.:
+   > "Check CPU temperature and list the last 5 running processes"
 
-## Output Logging
-- Every 5 prompt/response pairs are saved to a Markdown file in the `outputs/` folder (e.g., `session_1.md`).
-- SSH command outputs are included in the logs for traceability.
+## Tailscale Notes
+If the Raspberry Pi is in your tailnet, obtain the IP with:
+```bash
+tailscale ip -4
+```
+Set that as `SSH_HOST` for secure access without opening ports. The agent can also request Tailscale service status, restart it, or report version.
 
-## Example Output Log
-See `outputs/session_1.md` for a sample of how prompts, responses, and SSH outputs are recorded.
+## Logging
+- Every 5 prompt/response exchanges are appended to a rotating Markdown file in `outputs/` (e.g. `session_1.md`).
+- SSH command stdout/stderr are embedded for auditability.
+
+## Extending
+Add new operational capabilities by creating a module in `plugins/` that exposes a callable tool function. Register or auto-discover it in the agent (see existing examples like `duck_search.py`). Keep functions:
+- Pure (side effects only via SSH where possible)
+- Fast (avoid long blocking operations without streaming)
+- Described with a clear docstring to help the model choose them
+
+## Roadmap Ideas
+- Structured JSON mode for stable downstream parsing
+- WebSocket live command streaming
+- Fine-grained RBAC on dangerous commands
+- Automatic test coverage for new plugin tools
+- Docker container packaging
+
+## Safety Warning
+This agent can run destructive commands on a real device. Review outputs carefully. Prefer read-only or diagnostic commands unless you're sure.
 
 ## Credits
-- PiControl: Raspberry Pi command and monitoring agent
-
----
-**Warning:** This agent interacts with a real Raspberry Pi. Use caution with commands that may modify or delete files.
+Inspired by & extends concepts from PiControl (Raspberry Pi command & monitoring workflows) and general LLM tool-use agent patterns.
